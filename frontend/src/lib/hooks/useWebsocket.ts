@@ -1,8 +1,7 @@
-'use client';
 import { useEffect, useRef, useState } from 'react';
 
 const useWebSocket = (url: string) => {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const webSocketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -13,8 +12,13 @@ const useWebSocket = (url: string) => {
     };
 
     webSocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, data]);
+      try {
+        const data = JSON.parse(event.data);
+        setMessages((prevMessages) => [...prevMessages, data]);
+      } catch (error) {
+        console.error('Error parsing message:', error);
+        setMessages((prevMessages) => [...prevMessages, event.data]); // Handle non-JSON messages
+      }
     };
 
     webSocket.onerror = (error) => {

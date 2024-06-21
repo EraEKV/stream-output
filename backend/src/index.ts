@@ -6,7 +6,7 @@ import http from 'http';
 import { wss } from './roadmap/roadmap.router';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 app.use(logger);
 app.use(express.json());
@@ -16,15 +16,16 @@ const server = http.createServer(app);
 
 // Handle WebSocket connections with origin validation
 server.on('upgrade', (request, socket, head) => {
-  const origin = request.headers.origin;
+  // const origin = request.headers.origin;
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
   // Validate the origin before proceeding
-  if (origin === 'http://localhost:3000') {
-    wss.handleUpgrade(request, socket, head, (ws) => {
-      wss.emit('connection', ws, request);
-    });
-  } else {
-    socket.destroy();
-  }
+  // if (origin === 'http://localhost:3000') {
+    
+  // } else {
+  //   socket.destroy();
+  // }
 });
 
 server.listen(PORT, () => {

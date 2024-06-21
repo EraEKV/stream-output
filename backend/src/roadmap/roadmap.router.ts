@@ -13,6 +13,7 @@ const wss = new Server({ noServer: true });
 wss.on('connection', (ws: WebSocket) => {
   ws.on('message', async (message: string) => {
     const userPrompt = message.toString();
+    console.log('Received message:', userPrompt);
     await roadmapController.handleWebSocketConnection(ws, userPrompt);
   });
 
